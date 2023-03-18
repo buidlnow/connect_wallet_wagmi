@@ -1,17 +1,20 @@
 import Head from 'next/head'
 import styles from '@/styles/Home.module.css'
 import { ConnectKitButton } from "connectkit";
+import { useState } from 'react';
+import { useAccount, useConnect, useEnsName } from 'wagmi'
+import { InjectedConnector } from 'wagmi/connectors/injected'
 
 export default function Home() {
-  return (
-    <>
-      <Head>
-        <title>Connect Wallet with Wagmi</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </Head>
-      <main className={styles.main}>
-      <ConnectKitButton />
-      </main>
-    </>
-  )
+
+    const { address, isConnected } = useAccount()
+    const { data: ensName } = useEnsName({ address })
+    const { connect } = useConnect({
+      connector: new InjectedConnector(),
+    })
+
+
+    
+    if (isConnected) return <div>Connected to {ensName ?? address}</div>
+    return <ConnectKitButton />
 }
